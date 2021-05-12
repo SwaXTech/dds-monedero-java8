@@ -11,6 +11,7 @@ import dds.monedero.model.movimiento.Movimiento;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class Cuenta {
 
@@ -49,9 +50,13 @@ public class Cuenta {
 
   public double getMontoExtraidoA(LocalDate fecha) {
     return getMovimientos().stream()
-        .filter(movimiento -> !movimiento.isDeposito() && movimiento.esDeLaFecha(fecha))
+        .filter(extraccionDeLaFecha(fecha))
         .mapToDouble(Movimiento::getMonto)
         .sum();
+  }
+
+  private Predicate<Movimiento> extraccionDeLaFecha(LocalDate fecha) {
+    return movimiento -> !movimiento.isDeposito() && movimiento.esDeLaFecha(fecha);
   }
 
   
@@ -68,7 +73,7 @@ public class Cuenta {
   }
 
   private long cantidadDeDepositos() {
-    return getMovimientos().stream().filter(movimiento -> movimiento.isDeposito()).count();
+    return getMovimientos().stream().filter(Movimiento::isDeposito).count();
   }
 
   private void validarCantidadDepositos() {
