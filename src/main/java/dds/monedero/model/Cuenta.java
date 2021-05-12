@@ -28,19 +28,24 @@ public class Cuenta {
 
   public void poner(double cuanto) {
     validarMonto(cuanto);
-
-    if (getMovimientos().stream().filter(movimiento -> movimiento.isDeposito()).count() >= 3) {
-      throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
-    }
+    validarCantidadDepositos();
 
     new Movimiento(LocalDate.now(), cuanto, true).agregateA(this);
   }
 
+  private void validarCantidadDepositos() {
+    if (cantidadDeDepositos() >= 3) {
+      throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
+    }
+  }
+
+  private long cantidadDeDepositos() {
+    return getMovimientos().stream().filter(movimiento -> movimiento.isDeposito()).count();
+  }
+
   public void sacar(double cuanto) {
     validarMonto(cuanto);
-    if (getSaldo() - cuanto < 0) {
-      throw new SaldoMenorException("No puede sacar mas de " + getSaldo() + " $");
-    }
+    validarSaldo(cuanto);
     double montoExtraidoHoy = getMontoExtraidoA(LocalDate.now());
     double limite = 1000 - montoExtraidoHoy;
     if (cuanto > limite) {
@@ -48,6 +53,10 @@ public class Cuenta {
           + " diarios, límite: " + limite);
     }
     new Movimiento(LocalDate.now(), cuanto, false).agregateA(this);
+  }
+
+  private void validarSaldo(double cuanto) {
+    if (getSaldo() - cuanto < 0) throw new SaldoMenorException("No puede sacar mas de " + getSaldo() + " $");
   }
 
   public void agregarMovimiento(LocalDate fecha, double cuanto, boolean esDeposito) {
