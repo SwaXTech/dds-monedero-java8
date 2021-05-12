@@ -19,6 +19,19 @@ public class MonederoTest {
   }
 
   @Test
+  void cuentaParteEnCero(){
+    assertEquals(0, cuenta.getSaldo());
+  }
+
+  @Test
+  void cuentaConMontoInicial(){
+    
+    Cuenta cuenta = new Cuenta(100000);
+
+    assertEquals(100000, cuenta.getSaldo());
+  }
+
+  @Test
   void Poner() {
     cuenta.poner(1500);
     assertEquals(1500, cuenta.getSaldo());
