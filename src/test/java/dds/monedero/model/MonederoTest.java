@@ -4,6 +4,9 @@ import dds.monedero.exceptions.MaximaCantidadDepositosException;
 import dds.monedero.exceptions.MaximoExtraccionDiarioException;
 import dds.monedero.exceptions.MontoNegativoException;
 import dds.monedero.exceptions.SaldoMenorException;
+import dds.monedero.model.movimiento.Deposito;
+import dds.monedero.model.movimiento.Extraccion;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -85,8 +88,8 @@ public class MonederoTest {
 
   @Test
   void movimiento(){
-    cuenta.agregarMovimiento(LocalDate.now(), 100, true);
-    cuenta.agregarMovimiento(LocalDate.now(), 50, false);
+    cuenta.agregarMovimiento(new Deposito(LocalDate.now(), 100));
+    cuenta.agregarMovimiento(new Extraccion(LocalDate.now(), 50));
     assertEquals(cuenta.getMontoExtraidoA(LocalDate.now()), 50);
   }
 
