@@ -73,7 +73,7 @@ public class Cuenta {
 
   private void validarCantidadDepositos() {
     if (cantidadDeDepositos() >= 3) {
-      throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
+      throw new MaximaCantidadDepositosException(3);
     }
   }
 
@@ -81,17 +81,16 @@ public class Cuenta {
     double montoExtraidoHoy = getMontoExtraidoA(LocalDate.now());
     double limite = 1000 - montoExtraidoHoy;
     if (cuanto > limite) {
-      throw new MaximoExtraccionDiarioException("No puede extraer mas de $ " + 1000
-          + " diarios, límite: " + limite);
+      throw new MaximoExtraccionDiarioException(1000, limite);
     }
   }
 
   private void validarSaldo(double cuanto) {
-    if (getSaldo() - cuanto < 0) throw new SaldoMenorException("No puede sacar mas de " + getSaldo() + " $");
+    if (getSaldo() - cuanto < 0) throw new SaldoMenorException(getSaldo());
   }
 
   private void validarMonto(double monto){
-    if(monto < 0) throw new MontoNegativoException(monto + ": el monto a ingresar debe ser un valor positivo");
+    if(monto < 0) throw new MontoNegativoException(monto);
   }
 
 }
