@@ -33,34 +33,11 @@ public class Cuenta {
     new Movimiento(LocalDate.now(), cuanto, true).agregateA(this);
   }
 
-  private void validarCantidadDepositos() {
-    if (cantidadDeDepositos() >= 3) {
-      throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
-    }
-  }
-
-  private long cantidadDeDepositos() {
-    return getMovimientos().stream().filter(movimiento -> movimiento.isDeposito()).count();
-  }
-
   public void sacar(double cuanto) {
     validarMonto(cuanto);
     validarSaldo(cuanto);
     validarLimite(cuanto);
     new Movimiento(LocalDate.now(), cuanto, false).agregateA(this);
-  }
-
-  private void validarLimite(double cuanto) {
-    double montoExtraidoHoy = getMontoExtraidoA(LocalDate.now());
-    double limite = 1000 - montoExtraidoHoy;
-    if (cuanto > limite) {
-      throw new MaximoExtraccionDiarioException("No puede extraer mas de $ " + 1000
-          + " diarios, límite: " + limite);
-    }
-  }
-
-  private void validarSaldo(double cuanto) {
-    if (getSaldo() - cuanto < 0) throw new SaldoMenorException("No puede sacar mas de " + getSaldo() + " $");
   }
 
   public void agregarMovimiento(LocalDate fecha, double cuanto, boolean esDeposito) {
@@ -75,6 +52,7 @@ public class Cuenta {
         .sum();
   }
 
+  
   public List<Movimiento> getMovimientos() {
     return movimientos;
   }
@@ -85,6 +63,29 @@ public class Cuenta {
 
   public void setSaldo(double saldo) {
     this.saldo = saldo;
+  }
+
+  private long cantidadDeDepositos() {
+    return getMovimientos().stream().filter(movimiento -> movimiento.isDeposito()).count();
+  }
+
+  private void validarCantidadDepositos() {
+    if (cantidadDeDepositos() >= 3) {
+      throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
+    }
+  }
+
+  private void validarLimite(double cuanto) {
+    double montoExtraidoHoy = getMontoExtraidoA(LocalDate.now());
+    double limite = 1000 - montoExtraidoHoy;
+    if (cuanto > limite) {
+      throw new MaximoExtraccionDiarioException("No puede extraer mas de $ " + 1000
+          + " diarios, límite: " + limite);
+    }
+  }
+
+  private void validarSaldo(double cuanto) {
+    if (getSaldo() - cuanto < 0) throw new SaldoMenorException("No puede sacar mas de " + getSaldo() + " $");
   }
 
   private void validarMonto(double monto){
